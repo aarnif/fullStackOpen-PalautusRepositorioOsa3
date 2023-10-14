@@ -5,6 +5,7 @@ const data = require("./data");
 const app = express();
 
 app.use(express.json());
+app.use(express.static("dist"));
 app.use(cors());
 
 const customLogFunc = (tokens, req, res) => {
