@@ -42,4 +42,15 @@ app.delete("/api/persons/:id", (req, res) => {
   res.send(`Deleted person with id ${id}`);
 });
 
+app.post("/api/persons", (req, res) => {
+  const newPerson = {
+    name: req.body.name,
+    number: req.body.number,
+    id: Math.floor(Math.random() * 100000),
+  };
+  console.log(newPerson);
+  console.log(persons);
+  res.send(`Added person with id ${newPerson.id}`);
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
