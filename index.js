@@ -1,9 +1,11 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 const data = require("./data");
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 const customLogFunc = (tokens, req, res) => {
   const defaultLog = [
@@ -58,8 +60,8 @@ app.get("/api/persons/:id", (req, res) => {
 app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
   data.persons = data.persons.filter((person) => person.id !== id);
-  // console.log(`Deleted person with id ${id}`);
-  // console.log(data.persons);
+  console.log(`Deleted person with id ${id}`);
+  console.log(data.persons);
   res.send(`Deleted person with id ${id}`);
 });
 
