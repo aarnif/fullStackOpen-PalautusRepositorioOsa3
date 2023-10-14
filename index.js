@@ -26,8 +26,6 @@ const customLogFunc = (tokens, req, res) => {
 
 app.use(morgan(customLogFunc));
 
-const PORT = 3001;
-
 app.get("/", (req, res) => {
   res.redirect("/info");
 });
@@ -97,5 +95,7 @@ app.post("/api/persons", (req, res) => {
   // console.log(data.persons);
   res.json(newPerson);
 });
+
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
