@@ -1,20 +1,14 @@
 const mongoose = require("mongoose");
+const Person = require("./models/Person");
+require("dotenv").config();
 
-const password = process.argv[2];
-const contactName = process.argv[3];
-const contactNumber = process.argv[4];
+const contactName = process.argv[2];
+const contactNumber = process.argv[3];
 
-const mongoDB = `mongodb+srv://aarnif:${password}@cluster0.wuukb0r.mongodb.net/phonebook?retryWrites=true&w=majority`;
+const mongoDB = process.env.MONGODB_URI;
 
 mongoose.set("strictQuery", false);
 mongoose.connect(mongoDB);
-
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-});
-
-const Person = mongoose.model("Person", personSchema);
 
 if (!contactName) {
   Person.find({}).then((result) => {

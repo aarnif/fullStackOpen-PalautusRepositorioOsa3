@@ -1,8 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const data = require("./data");
 const app = express();
+const Person = require("./models/Person");
 
 app.use(express.json());
 app.use(express.static("dist"));
@@ -40,7 +42,9 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons", (req, res) => {
-  res.json(data);
+  Person.find({}).then((persons) => {
+    res.json(persons);
+  });
 });
 
 app.get("/api/persons/:id", (req, res) => {
@@ -48,10 +52,8 @@ app.get("/api/persons/:id", (req, res) => {
   const person = data.persons.find((person) => person.id === id);
 
   if (!person) {
-    // console.log("Person does not exist!");
     res.status(404).send("Person does not exist!");
   } else {
-    // console.log("Send person info:", person);
     res.json(person);
   }
 });
@@ -92,11 +94,9 @@ app.post("/api/persons", (req, res) => {
   }
 
   data.persons.push(newPerson);
-  // console.log(newPerson);
-  // console.log(data.persons);
   res.json(newPerson);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
