@@ -54,15 +54,19 @@ app.get("/api/persons", (req, res) => {
   });
 });
 
-app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = data.persons.find((person) => person.id === id);
+app.get("/api/persons/:id", (req, res, next) => {
+  const findPerson = Person.findById(req.params.id);
 
-  if (!person) {
-    res.status(404).send("Person does not exist!");
-  } else {
-    res.json(person);
-  }
+  findPerson
+    .then((person) => {
+      if (!person) {
+        return res.status(400).json({
+          error: "Person with that id does not exists!",
+        });
+      }
+      res.json(person);
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
