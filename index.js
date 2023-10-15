@@ -59,11 +59,11 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  data.persons = data.persons.filter((person) => person.id !== id);
-  console.log(`Deleted person with id ${id}`);
-  console.log(data.persons);
-  res.send(`Deleted person with id ${id}`);
+  const personToBeDeleted = Person.findByIdAndRemove(req.params.id).then(
+    (result) => {
+      res.status(204).json(personToBeDeleted);
+    }
+  );
 });
 
 app.post("/api/persons", (req, res) => {
