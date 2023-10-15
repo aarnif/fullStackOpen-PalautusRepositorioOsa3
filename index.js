@@ -43,11 +43,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  res.send(
-    `<p>Phonebook has info for ${
-      data.persons.length
-    } people</p><p>${new Date()}</p>`
-  );
+  Person.find({}).then((persons) => {
+    res.send(
+      `<p>Phonebook has info for ${
+        persons.length
+      } people</p><p>${new Date()}</p>`
+    );
+  });
 });
 
 app.get("/api/persons", (req, res) => {
@@ -77,7 +79,11 @@ app.put("/api/persons/:id", (req, res, next) => {
     number: req.body.number,
   };
 
-  Person.findByIdAndUpdate(req.params.id, updatedPerson, { new: true })
+  Person.findByIdAndUpdate(req.params.id, updatedPerson, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updatedPerson) => {
       res.json(updatedPerson);
     })
