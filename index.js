@@ -10,6 +10,13 @@ app.use(express.json());
 app.use(express.static("dist"));
 app.use(cors());
 
+const errorHandler = (error, req, res, next) => {
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "invalid id!" });
+  }
+  next(error);
+};
+
 const customLogFunc = (tokens, req, res) => {
   const defaultLog = [
     tokens.method(req, res),
@@ -58,12 +65,15 @@ app.get("/api/persons/:id", (req, res) => {
   }
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  const personToBeDeleted = Person.findByIdAndRemove(req.params.id).then(
-    (result) => {
-      res.status(204).json(personToBeDeleted);
-    }
-  );
+app.delete("/api/persons/:id", (req, res, next) => {
+  const personToBeDeleted = Person.findByIdAndRemove(req.params.id, {
+    new: true,
+  });
+  personToBeDeleted
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 app.post("/api/persons", (req, res) => {
@@ -88,6 +98,8 @@ app.post("/api/persons", (req, res) => {
     res.json(newPerson);
   });
 });
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 
