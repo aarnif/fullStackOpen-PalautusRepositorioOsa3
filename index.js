@@ -12,7 +12,9 @@ app.use(cors());
 
 const errorHandler = (error, req, res, next) => {
   if (error.name === "CastError") {
-    return res.status(400).send({ error: "invalid id!" });
+    return res.status(400).json({ error: "invalid id!" });
+  } else if (error.name === "ValidationError") {
+    return res.status(400).json({ error: error.message });
   }
   next(error);
 };
@@ -93,7 +95,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const newPerson = new Person({
     name: req.body.name,
     number: req.body.number,
@@ -111,9 +113,12 @@ app.post("/api/persons", (req, res) => {
     });
   }
 
-  newPerson.save().then(() => {
-    res.json(newPerson);
-  });
+  newPerson
+    .save()
+    .then(() => {
+      res.json(newPerson);
+    })
+    .catch((error) => next(error));
 });
 
 app.use(errorHandler);
