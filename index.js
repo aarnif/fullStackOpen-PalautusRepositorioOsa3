@@ -67,11 +67,10 @@ app.delete("/api/persons/:id", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  const newPerson = {
+  const newPerson = new Person({
     name: req.body.name,
     number: req.body.number,
-    id: Math.floor(Math.random() * 100000),
-  };
+  });
 
   if (newPerson.name.length === 0) {
     return res.status(400).json({
@@ -85,16 +84,9 @@ app.post("/api/persons", (req, res) => {
     });
   }
 
-  const personExists = data.persons.find(
-    (person) => person.name === newPerson.name
-  );
-
-  if (personExists) {
-    return res.status(400).json({ error: "name must be unique" });
-  }
-
-  data.persons.push(newPerson);
-  res.json(newPerson);
+  newPerson.save().then(() => {
+    res.json(newPerson);
+  });
 });
 
 const PORT = process.env.PORT;
